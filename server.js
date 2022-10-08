@@ -15,7 +15,7 @@ dbConnection.connect(err => {
     if (err) throw err;
     console.log('connected');
     promptUser();
-})
+});
 
 const promptUser = () => {
     inquirer.prompt([
@@ -64,4 +64,68 @@ const promptUser = () => {
             updateEmployee();
         }
     })
-}
+};
+
+const viewDepartments = () => {
+    dbConnection.query('SELECT * FROM department ORDER BY name', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        promptUser();
+    })
+};
+
+const viewRoles = () => {
+    dbConnection.query('SELECT * FROM role ORDER BY title', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        promptUser();
+    })
+};
+
+const viewEmployees = () => {
+    dbConnection.query('SELECT * FROM employee ORDER BY first_name', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        promptUser();
+    })
+};
+
+const addDepartment = () => {
+    inquirer.prompt({
+        type: 'input',
+        name: 'addDept',
+        message: 'Please state which department you wish to add'
+    }).then(answer => {
+        dbConnection.query('INSERT INTO department SET ?', {name: `${answer.addDept}`}, (err, res) => {
+            if (err) throw err;
+            console.log(`You have added the ${answer.addDept} department.`);
+            promptUser();
+        })
+    });
+};
+
+const addRole = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'title',
+            message: 'Please state the title of the role you wish to add'
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'Please state the salary of the role you wish to add'
+        },
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Please choose the department the role you wish to add belongs to'
+        }
+    ]).then(answer => {
+        dbConnection.query('INSERT INTO role SET ?', {name: `${answer.Role}`}, (err, res) => {
+            if (err) throw err;
+            console.log(`You have added the ${answer.addDepartment} department.`);
+            promptUser();
+        })
+    });
+};
